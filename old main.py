@@ -15,7 +15,7 @@ raqueta1 = Raqueta(10,300) # al estar definidos en la clase los demas los coge p
 raqueta2 = Raqueta(790,300)
 
 #asignando velocidad
-raqueta1.vy=5
+raqueta1.vy=6
 pelota.vx=4
 
 
@@ -36,7 +36,7 @@ while not game_over:
     pantalla_principal.fill((72,156,75))#pintado de pantalla
  
  # logica para que rebote la pelota al tocar la raqueta
-    pelota.comprobrar_choque(raqueta1,raqueta2)
+    pelota.comprobar_choque (raqueta1,raqueta2)
  
  
     pelota.marcador(pantalla_principal)#pintado de marcador

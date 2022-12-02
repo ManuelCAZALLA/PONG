@@ -20,23 +20,24 @@ class Pelota:
         self.pos_x += self.vx
         self.pos_y += self.vy
 
-        print("posicion x:",self.pos_x+self.radio)
-        print("posicion y:",self.pos_y+self.radio)
-
-        if self.pos_y >= y_max-self.radio or self.pos_y < 0+self.radio:
+        if self.pos_y >= y_max-self.radio or self.pos_y < 0+self.radio:#para que rebote arriba y abajo
             self.vy *= -1 
-        #objetivo que la pelota desaparezca en los limites
-        # y vuelva a aparecer rebotando hacia el lado contrario
-        #desde donde vino
-        #contar el gol nuevo desafio
+            
+            # con esto contamos los goles
         if self.pos_x >= x_max+self.radio*10:#limite derecho
             self.contadorIzquierda += 1 
+
+            self.pos_x = x_max//2 # esto es para que la pelota aparezca en el centro al marcar gol
+            self.pos_y = y_max//2
             self.vx *= -1
-            self.vy *= -1
+            self.vy *= -1 
              
 
         if self.pos_x < 0-self.radio*10:#limite izquierdo
             self.contadorDerecha +=1
+
+            self.pos_x = x_max//2
+            self.pos_y = y_max//2
             self.vx *= -1
             self.vy *= -1
     
@@ -45,32 +46,35 @@ class Pelota:
         marcadorDerecha = self.font.render( str(self.contadorIzquierda),0, (255,255,0))
         pantalla_principal.blit(marcadorDerecha, (200, 50))
         pantalla_principal.blit(marcadorIzquierda, (600, 50 ))
+    
 
-    def posicionX(self):
-        return self.pos_x+self.radio
-
-    def posicionY(self):
-        return self.pos_y+self.radio 
-
-    def izquierda(self):
-        if self.pos_x < 400:
-            return True
-        return False
-
+    @property # esto convierte una funcion en una variable
     def derecha(self):
-        if self.pos_x > 400:
-            return True
-        return False
-
+        return self.pos_x + self.radio
+    @property
+    def izquierda(self):
+        return self.pos_x - self.radio
+    @property
     def arriba(self):
-        if self.pos_y < 300:
-            return True
-        return False
-
+        return self.pos_y - self.radio
+    @property
     def abajo(self):
-        if self.pos_y > 300:
-            return True
-        return False             
+        return self.pos_y + self.radio                
+
+    
+
+    def comprobar_choque(self,*raquetas): # esta funcion me sirve para las 2 raquetas va con * e itera con for
+        for r in raquetas:
+            if self.derecha  >= r.izquierda and \
+               self.izquierda  <= r.derecha and \
+               self.abajo >= r.arriba and\
+               self.arriba <= r.abajo:
+                    self.vx *= -1
+                    return # este return vacio es igual que break
+   
+
+
+              
     
 
             
@@ -93,9 +97,25 @@ class Raqueta:
         
 
     def mover(self,tecla_arriba,tecla_abajo,y_max=600,y_min=0):
-        estado_teclas = pg.key.get_pressed() # con esto le podemos decir la tecla del teclado que qeremos utilizar
+        estado_teclas = pg.key.get_pressed()
        
-        if estado_teclas[tecla_arriba] == True and self.pos_y > (y_min+self.h//2): # lo divido para que no se salga de la pantalla
+        if estado_teclas[tecla_arriba] == True and self.pos_y > (y_min+self.h//2):
             self.pos_y -= 1
-        if estado_teclas[tecla_abajo] == True and self.pos_y < (y_max-self.h//2) : # divido la h con // para que me de un numero entero
+        if estado_teclas[tecla_abajo] == True and self.pos_y < (y_max-self.h//2) :
             self.pos_y += 1     
+
+    @property
+    def arriba(self):
+        return self.pos_y - self.h//2
+
+    @property
+    def abajo(self):
+        return self.pos_y + self.h//2
+    
+    @property
+    def izquierda(self):
+        return self.pos_x - self.w//2
+    
+    @property
+    def derecha(self):
+        return self.pos_x + self.w//2    
