@@ -16,7 +16,7 @@ raqueta2 = Raqueta(790,300)
 
 #asignando velocidad
 raqueta1.vy=6
-pelota.vx=4
+pelota.vx=3
 
 
 game_over = False
