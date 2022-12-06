@@ -31,7 +31,7 @@ class Pelota:
             self.pos_y = y_max//2
             self.vx *= -1
             self.vy *= -1 
-             
+            return "derecha"
 
         if self.pos_x < 0-self.radio*10:#limite izquierdo
             self.contadorDerecha +=1
@@ -40,7 +40,7 @@ class Pelota:
             self.pos_y = y_max//2
             self.vx *= -1
             self.vy *= -1
-    
+            return "izquierda"
     def marcador(self,pantalla_principal):
         marcadorIzquierda = self.font.render(str( self.contadorDerecha),0, (255,255,0))
         marcadorDerecha = self.font.render( str(self.contadorIzquierda),0, (255,255,0))
