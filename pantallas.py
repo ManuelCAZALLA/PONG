@@ -1,21 +1,12 @@
 import pygame as pg
 from figura_class import Pelota,Raqueta
+from utils import * # importo todos los utiles
 
-ANCHO = 800
-ALTO = 600
-BLANCO=(255,255,255)
-AMARILLO=(255,255,0)
-ROJO = (255,0,0)
-NARANJA=(255, 128, 0)
-VERDE=(0,128,94)
-FPS = 280
-PRIMER_AVISO = 10000
-SEGUNDO_AVISO = 5000
 
 
 class Partida:
     def __init__(self):
-        pg.init()
+        
         self.pantalla_principal = pg.display.set_mode((ANCHO,ALTO))
         pg.display.set_caption("Pong")
         self.tasa_refresco = pg.time.Clock()
@@ -27,12 +18,17 @@ class Partida:
         self.marcador1 = 0
         self.marcador2 = 0
         self.quienMarco = ""
-        self.temporizador = 15000 #en milisegundos
+        self.temporizador = TIEMPO_LIMITE #en milisegundos
         self.colorFondo = VERDE  
         self.contadorFotograma=0
         
 
     def bucle_fotograma(self):
+        #reinicio de estos parametros
+        self.temporizador = TIEMPO_LIMITE
+        self.marcador1 = 0
+        self.marcador2 = 0
+        self.tasa_refresco.tick()
         game_over = False
         while not game_over and (self.marcador1 < 10 or self.marcador2 < 10) and self.temporizador > 0: # se acaba el juego cuando se llegue a 10 goles o con el temporizador
 
@@ -66,8 +62,9 @@ class Partida:
             self.mostrar_jugador()
             self.quienMarco = self.pelota.mover()
             pg.display.flip()
-
-        pg.quit()       
+            return self.resultado_final ()
+          
+            
 
     def linea_disc(self):
         cont_linea1=0
@@ -95,10 +92,11 @@ class Partida:
         self.pantalla_principal.blit(marcadorIzquierda, (600, 50 ))
 
     def fijar_fondo(self):
+        self.colorFondo = VERDE
         self.contadorFotograma +=1
 
         if self.temporizador > PRIMER_AVISO:#no entra en ninguna condicion aun
-          
+            self.colorFondo = VERDE
             self.contadorFotograma=0
 
         elif self.temporizador > SEGUNDO_AVISO:#entra en la condicion que parpadee en naranja, 10 SEGUNDOS
@@ -120,9 +118,17 @@ class Partida:
 
         return self.colorFondo
     
+    
+    def resultado_final(self):
+        if self.marcador1 > self.marcador2 :
+            return f"Gana el Jugador 1,resultado Jugador1 :{self.marcador2}, resultado Jugador 2 {self.marcador1}".format
+        elif self.marcador1 < self.marcador2 :
+            return f"Gana el jugador 2 ,resultado Jugador1 :{self.marcador2}, resultado Jugador 2 {self.marcador1}".format
+        else :
+            "Han empatado"
 class Menu:
         def __init__(self) :
-            pg.init ()
+            
             self.pantalla_principal = pg.display.set_mode ((ANCHO,ALTO))
             pg.display.set_caption ("Menu")
             self.tasa_refresco = pg.time.Clock()
@@ -135,11 +141,11 @@ class Menu:
             while not game_over :
                 for evento in pg.event.get():
                     if evento.type == pg.QUIT :
-                        game_over = True
-                
-                if evento.type == pg.KEYDOWN:
+                        #game_over = True
+                        return True
+                if evento.type == pg.KEYDOWN: # pulsa Enter
                     if evento.key == pg.K_RETURN:
-                        game_over = True
+                        game_over = True # con esto cierra la pantalla menu
                         return "jugar"
                                 
                 self.pantalla_principal.blit(self.imagenFondo,(0,0))
@@ -147,9 +153,69 @@ class Menu:
                 self.pantalla_principal.blit (menu, (125,ALTO//2))
                 pg.display.flip ()        
                         
-class Ganador :
+class Resultado :
         def __init__(self) :
            pg.init ()
            self.pantalla_principal = pg.display.set_mode((ANCHO,ALTO)) 
-           pg.display.set_caption ("Ganador")  
+           pg.display.set_caption ("Resultado")  
            self.tasa_refresco = pg.time.Clock()                 
+           
+           self.imagen = pg.image.load("images/ganador.jpg")
+           self.fuente = pg.font.Font("fonts/PressStart2P.ttf",30)
+           self.resultado = ""
+        
+        def bucle (self) :
+            game_over = False
+            while not game_over :
+                for evento in pg.event.get():
+                    if evento.type == pg.QUIT :
+                        game_over = True
+                        
+                    
+                    if evento.type == pg.KEYDOWN: # pulsa Enter
+                     if evento.key == pg.K_RETURN:
+                        game_over = True # con esto cierra la pantalla menu
+                        
+                
+                
+                self.pantalla_principal.blit(self.imagen,(-115,-150))
+                result = self.fuente.render(self.resultado ,0,ROJO)
+                self.pantalla_principal.blit (result, (100,ALTO//2))
+                pg.display.flip ()
+        
+        def recibir_resultado (self,resultado):
+             self.resultado = resultado
+            
+class Records :
+    def __init__(self) :
+            
+            self.pantalla_principal = pg.display.set_mode ((ANCHO,ALTO))
+            pg.display.set_caption ("Records")
+            self.tasa_refresco = pg.time.Clock()
+            
+            self.imagenFondo = pg.image.load("images/portada.jpg")
+            self.fuenteMenu = pg.font.Font("fonts/PressStart2P.ttf",30)
+        
+    def buclePantalla  (self) :
+            game_over = False
+            while not game_over :
+                for evento in pg.event.get():
+                    if evento.type == pg.QUIT : # esto es la x para cerrar la ventana
+                        game_over = True
+                
+                if evento.type == pg.KEYDOWN: # pulsa Enter
+                    if evento.key == pg.K_RETURN:
+                        game_over = True # con esto cierra la pantalla menu
+                    
+                if evento.type == pg.KEYDOWN: # pulsa Enter
+                    if evento.key == pg.K_r:
+                        game_over = True # con esto cierra la pantalla menu
+                    
+                                
+                self.pantalla_principal.blit(self.imagenFondo(0,0))
+                jugar = self.fuenteMenu.render("Pulsa Enter para jugar",0,ROJO)
+                records = self.fuenteMenu.render("Pulsa R para ver  Records",0, ROJO)
+                self.pantalla_principal.blit (jugar, (125,ALTO//2))
+                self.pantalla_principal.blit (records, (125,ALTO//2))
+                pg.display.flip ()        
+                   
